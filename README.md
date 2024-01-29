@@ -88,7 +88,8 @@ To learn more about React Native, take a look at the following resources:
 - on Empty tank button clicked it will remove all water from tank in instant
 
 ### Video 
-[Uploading Screencast from 01-29-2024 09:50:36 PM.webm…]()
+[Screencast from 01-29-2024 09:50:36 PM.webm](https://github.com/shreya-mishra/Puzzle_App/assets/61110378/16281a57-ad10-41a9-998e-6c7413d760d7)
+
 
 ### APK 
 coming soon
