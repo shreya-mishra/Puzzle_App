@@ -1,4 +1,4 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+[Screencast from 01-29-2024 09:50:36 PM.webm](https://github.com/shreya-mishra/Puzzle_App/assets/61110378/0ec99a28-f82b-45f5-a231-29ec05dc1150)This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
 
@@ -86,3 +86,15 @@ To learn more about React Native, take a look at the following resources:
 - Add water will fill the water continously every 1 s , it adds 200L water if the tank is not already full
 - The water tank can eventually settle to same height , The water moves in and out of the tank at the rate of 25L/second
 - on Empty tank button clicked it will remove all water from tank in instant
+
+### Video 
+[Uploading Screencast from 01-29-2024 09:50:36 PM.webm…]()
+
+### APK 
+coming soon
+
+### Test
+In Progress
+
+
+
