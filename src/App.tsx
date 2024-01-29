@@ -13,12 +13,22 @@ const App = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       const flowRate = 25;
+      console.log('liquidQuantity', liquidQuantity);
+
+      // Calculate the average water level
+      const averageLevel =
+        liquidQuantity.reduce((sum, level) => sum + level, 0) / NUMBER_OF_TANKS;
 
       // Simulate water flow between tanks
       const updatedLevels = liquidQuantity.map((level, i) => {
-        if (i < liquidQuantity.length - 1 && level > liquidQuantity[i + 1]) {
+        const nextLevel =
+          i < liquidQuantity.length - 1
+            ? liquidQuantity[i + 1]
+            : liquidQuantity[0];
+
+        if (level > nextLevel) {
           return level - flowRate;
-        } else if (i > 0 && level < liquidQuantity[i - 1]) {
+        } else if (level < averageLevel) {
           return level + flowRate;
         } else {
           return level;
