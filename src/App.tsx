@@ -13,6 +13,8 @@ const App = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       const flowRate = 25;
+      const distributionThreshold = 5;
+
       console.log('liquidQuantity', liquidQuantity);
 
       // Calculate the average water level
@@ -34,7 +36,13 @@ const App = () => {
           return level;
         }
       });
+      const isEvenlyDistributed = liquidQuantity.every(
+        level => Math.abs(level - averageLevel) < distributionThreshold,
+      );
 
+      if (isEvenlyDistributed) {
+        clearInterval(interval);
+      }
       setLiquidQuanity(updatedLevels);
     }, 1000);
 
