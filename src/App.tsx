@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import TankFrame from './components/TankFrame';
 
 const NUMBER_OF_TANKS = 3;
@@ -49,7 +49,7 @@ const App = () => {
     );
   };
   return (
-    <View>
+    <View style={styles.tankRow}>
       {/* TODO: can add input box to ask enter number of tanks for now 3 tanks will be there*/}
       {liquidQuantity.map((level, index) => (
         <TankFrame
@@ -65,3 +65,27 @@ const App = () => {
 };
 
 export default App;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  tankRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  tankContainer: {
+    margin: 10,
+    alignItems: 'center',
+  },
+});
