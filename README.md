@@ -77,3 +77,12 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+
+
+### Requirement
+
+- Each water tank can hold 1000L of water 
+- Every tank has Add water and empty tank button
+- Add water will fill the water continously every 1 s , it adds 200L water if the tank is not already full
+- The water tank can eventually settle to same height , The water moves in and out of the tank at the rate of 25L/second
+- on Empty tank button clicked it will remove all water from tank in instant
