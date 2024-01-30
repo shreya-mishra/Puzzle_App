@@ -71,10 +71,11 @@ const App = () => {
     );
   };
   return (
-    <ScrollView>
+    <ScrollView style={styles.container}>
       <TextInput
         style={styles.input}
         placeholder="Enter number of tanks"
+        placeholderTextColor={'#313638'}
         keyboardType="numeric"
         onChangeText={text => setNumTanks(parseInt(text) || 0)}
       />
@@ -99,12 +100,13 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    backgroundColor: '#efefef',
   },
   input: {
     height: 40,
-    borderColor: 'white',
+    // borderColor: 'white',
     borderWidth: 1,
     marginBottom: 10,
     textAlign: 'center',
