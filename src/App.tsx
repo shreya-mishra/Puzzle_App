@@ -7,6 +7,7 @@ import {
   delay,
   getTotalWaterCanFlowOut,
 } from './utils/helper';
+import {colors} from './constants/Colors';
 
 const App = () => {
   const [numTanks, setNumTanks] = useState<number>(NUMBER_OF_TANKS); // Default number of tanks
@@ -75,7 +76,7 @@ const App = () => {
       <TextInput
         style={styles.input}
         placeholder="Enter number of tanks"
-        placeholderTextColor={'#313638'}
+        placeholderTextColor={colors.color_100}
         keyboardType="numeric"
         onChangeText={text => setNumTanks(parseInt(text) || 0)}
       />
@@ -100,13 +101,10 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    backgroundColor: '#efefef',
+    backgroundColor: colors.color_background,
   },
   input: {
     height: 40,
-    // borderColor: 'white',
     borderWidth: 1,
     marginBottom: 10,
     textAlign: 'center',
@@ -117,6 +115,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    //width: 100,
   },
 });
