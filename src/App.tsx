@@ -1,9 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import TankFrame from './components/TankFrame';
-
-const NUMBER_OF_TANKS = 3;
-const MaxQuantity = 1000;
+import {
+  MaxQuantity,
+  NUMBER_OF_TANKS,
+  delay,
+  getTotalWaterCanFlowOut,
+} from './utils/helper';
 
 const App = () => {
   const [liquidQuantity, setLiquidQuanity] = useState<number[]>(
@@ -11,42 +14,38 @@ const App = () => {
   );
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const flowRate = 25;
-      const distributionThreshold = 5;
+    // get total level
+    const totalQty = liquidQuantity.reduce((acc, level) => acc + level, 0);
 
-      console.log('liquidQuantity', liquidQuantity);
+    // get average level
+    const averageQty = totalQty / NUMBER_OF_TANKS;
+    // get smaller tank quantity
+    const smallerQtyTanks = liquidQuantity.filter(level => level < averageQty);
+    //get total water that can flow out
+    let cleanup = false;
 
-      // Calculate the average water level
-      const averageLevel =
-        liquidQuantity.reduce((sum, level) => sum + level, 0) / NUMBER_OF_TANKS;
+    async function balanceLevels() {
+      await delay(1000);
 
-      // Simulate water flow between tanks
-      const updatedLevels = liquidQuantity.map((level, i) => {
-        const nextLevel =
-          i < liquidQuantity.length - 1
-            ? liquidQuantity[i + 1]
-            : liquidQuantity[0];
-
-        if (level > nextLevel) {
-          return level - flowRate;
-        } else if (level < averageLevel) {
-          return level + flowRate;
-        } else {
-          return level;
-        }
-      });
-      const isEvenlyDistributed = liquidQuantity.every(
-        level => Math.abs(level - averageLevel) < distributionThreshold,
-      );
-
-      if (isEvenlyDistributed) {
-        clearInterval(interval);
+      if (cleanup) {
+        return;
       }
-      setLiquidQuanity(updatedLevels);
-    }, 1000);
 
-    return () => clearInterval(interval);
+      const newTanks = getTotalWaterCanFlowOut(
+        liquidQuantity,
+        averageQty,
+        smallerQtyTanks,
+      );
+      if (newTanks) {
+        setLiquidQuanity(newTanks);
+      }
+    }
+
+    balanceLevels();
+    return () => {
+      cleanup = true;
+    };
+    //get total water that can flow out and distribute into small tank
   }, [liquidQuantity]);
 
   const addWaterHandler = (index: number) => {
@@ -71,6 +70,7 @@ const App = () => {
       {/* TODO: can add input box to ask enter number of tanks for now 3 tanks will be there*/}
       {liquidQuantity.map((level, index) => (
         <TankFrame
+          testID="tank0"
           key={index}
           index={index}
           addWaterHandler={() => addWaterHandler(index)}
