@@ -1,6 +1,7 @@
 import {Animated, Easing, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Button_ from './Button_';
+import {colors} from '../constants/Colors';
 
 type tankFrameType = {
   index: number;
@@ -37,13 +38,14 @@ const TankFrame = ({
         <Button_
           title={'Empty Water'}
           handler={emptyWaterHandler}
-          buttonColor={'#c51f3a'}
+          buttonColor={colors.color_secondary}
         />
       </View>
-      {/* TODO: Add Water tank animation flow */}
       <View style={styles.tank}>
         <View style={styles.text}>
-          <Text style={{color: '#313638'}}>{quantity.toFixed(1)}Ltr</Text>
+          <Text style={{color: colors.color_100}}>
+            {quantity.toFixed(1)}Ltr
+          </Text>
         </View>
         <Animated.View style={[styles.tankLevel, {height: tankLevelHeight}]} />
       </View>
@@ -90,12 +92,17 @@ const styles = StyleSheet.create({
     position: 'relative',
     bottom: 0,
     width: '100%',
-    backgroundColor: '#3994f8',
+    backgroundColor: colors.color_water,
   },
   buttonContainer: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
   },
-  basket: {textAlign: 'center', marginTop: 8, color: 'orange'},
+  basket: {
+    textAlign: 'center',
+    marginTop: 8,
+    fontWeight: 'bold',
+    color: 'orange',
+  },
 });
