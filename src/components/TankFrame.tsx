@@ -37,7 +37,7 @@ const TankFrame = ({
         <Button_
           title={'Empty Water'}
           handler={emptyWaterHandler}
-          buttonColor={'red'}
+          buttonColor={'#c51f3a'}
         />
       </View>
       {/* TODO: Add Water tank animation flow */}
