@@ -5,22 +5,24 @@ import Button_ from './Button_';
 type tankFrameType = {
   index: number;
   quantity: number;
+  testID: string;
   addWaterHandler: () => void;
   emptyWaterHandler: () => void;
 };
 const TankFrame = ({
   index,
   quantity,
+  testID,
   addWaterHandler,
   emptyWaterHandler,
 }: tankFrameType) => {
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID={testID}>
       <View style={styles.buttonContainer}>
         <Button_ title={'Add Water'} handler={addWaterHandler} />
         <Button_ title={'Empty Water'} handler={emptyWaterHandler} />
       </View>
-
+      {/* TODO: Add Water tank animation flow */}
       <Text style={styles.basket}>
         Water Level in Tank {index + 1}: {quantity}L
       </Text>
@@ -35,10 +37,13 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'space-between',
     width: 100,
-    height: 100,
-    margin: 40,
+    //    height: 100,
+    margin: 20,
+    alignItems: 'center',
+
     // marginTop: 20,
   },
+
   buttonContainer: {
     display: 'flex',
     flexDirection: 'column',

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, TextInput, View} from 'react-native';
 import TankFrame from './components/TankFrame';
 import {
   MaxQuantity,
@@ -9,16 +9,21 @@ import {
 } from './utils/helper';
 
 const App = () => {
-  const [liquidQuantity, setLiquidQuanity] = useState<number[]>(
-    Array(NUMBER_OF_TANKS).fill(0),
-  );
+  const [numTanks, setNumTanks] = useState<number>(NUMBER_OF_TANKS); // Default number of tanks
 
+  const [liquidQuantity, setLiquidQuanity] = useState<number[]>(
+    Array(numTanks).fill(0),
+  );
+  useEffect(() => {
+    const newTanks = Array(numTanks).fill(0);
+    setLiquidQuanity(newTanks);
+  }, [numTanks]);
   useEffect(() => {
     // get total level
     const totalQty = liquidQuantity.reduce((acc, level) => acc + level, 0);
 
     // get average level
-    const averageQty = totalQty / NUMBER_OF_TANKS;
+    const averageQty = totalQty / numTanks;
     // get smaller tank quantity
     const smallerQtyTanks = liquidQuantity.filter(level => level < averageQty);
     //get total water that can flow out
@@ -66,19 +71,26 @@ const App = () => {
     );
   };
   return (
-    <View style={styles.tankRow}>
-      {/* TODO: can add input box to ask enter number of tanks for now 3 tanks will be there*/}
-      {liquidQuantity.map((level, index) => (
-        <TankFrame
-          testID="tank0"
-          key={index}
-          index={index}
-          addWaterHandler={() => addWaterHandler(index)}
-          emptyWaterHandler={() => emptyWaterHandler(index)}
-          quantity={level}
-        />
-      ))}
-    </View>
+    <ScrollView>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter number of tanks"
+        keyboardType="numeric"
+        onChangeText={text => setNumTanks(parseInt(text) || 0)}
+      />
+      <View style={styles.tankRow}>
+        {liquidQuantity.map((level, index) => (
+          <TankFrame
+            testID="tank0"
+            key={index}
+            index={index}
+            addWaterHandler={() => addWaterHandler(index)}
+            emptyWaterHandler={() => emptyWaterHandler(index)}
+            quantity={level}
+          />
+        ))}
+      </View>
+    </ScrollView>
   );
 };
 
@@ -92,18 +104,17 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: 'white',
     borderWidth: 1,
     marginBottom: 10,
     textAlign: 'center',
+    margin: 10,
+    borderRadius: 4,
   },
   tankRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-  },
-  tankContainer: {
-    margin: 10,
-    alignItems: 'center',
+    //width: 100,
   },
 });
