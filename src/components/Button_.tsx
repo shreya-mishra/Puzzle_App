@@ -4,11 +4,12 @@ import React from 'react';
 type ButtonType = {
   title: string;
   handler: () => void;
+  buttonColor: string;
 };
-const Button_ = ({title, handler}: ButtonType) => {
+const Button_ = ({title, handler, buttonColor}: ButtonType) => {
   return (
     <View style={styles.buttonContainer}>
-      <Button title={title} onPress={handler} />
+      <Button title={title} onPress={handler} color={buttonColor} />
     </View>
   );
 };

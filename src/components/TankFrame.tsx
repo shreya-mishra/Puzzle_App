@@ -1,5 +1,5 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {Animated, Easing, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import Button_ from './Button_';
 
 type tankFrameType = {
@@ -16,16 +16,38 @@ const TankFrame = ({
   addWaterHandler,
   emptyWaterHandler,
 }: tankFrameType) => {
+  const [tankLevelHeight] = useState(new Animated.Value(0));
+
+  useEffect(() => {
+    Animated.timing(tankLevelHeight, {
+      toValue: quantity * 0.2,
+      duration: 500, // Adjust the duration as needed
+      easing: Easing.linear,
+    }).start();
+  }, [quantity]);
+
   return (
     <View style={styles.container} testID={testID}>
       <View style={styles.buttonContainer}>
-        <Button_ title={'Add Water'} handler={addWaterHandler} />
-        <Button_ title={'Empty Water'} handler={emptyWaterHandler} />
+        <Button_
+          title={'Add Water'}
+          handler={addWaterHandler}
+          buttonColor={'green'}
+        />
+        <Button_
+          title={'Empty Water'}
+          handler={emptyWaterHandler}
+          buttonColor={'red'}
+        />
       </View>
       {/* TODO: Add Water tank animation flow */}
-      <Text style={styles.basket}>
-        Water Level in Tank {index + 1}: {quantity}L
-      </Text>
+      <View style={styles.tank}>
+        <View style={styles.text}>
+          <Text style={{color: '#313638'}}>{quantity.toFixed(1)}Ltr</Text>
+        </View>
+        <Animated.View style={[styles.tankLevel, {height: tankLevelHeight}]} />
+      </View>
+      <Text style={styles.basket}>Tank {index + 1}</Text>
     </View>
   );
 };
@@ -37,13 +59,39 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'space-between',
     width: 100,
-    //    height: 100,
     margin: 20,
     alignItems: 'center',
-
-    // marginTop: 20,
   },
-
+  text: {
+    position: 'absolute',
+    height: 250,
+    justifyContent: 'center',
+    alignItems: 'center',
+    display: 'flex',
+    width: 100,
+    transform: [{rotate: '180deg'}],
+  },
+  tank: {
+    height: 250,
+    width: 100,
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    borderColor: 'grey',
+    display: 'flex',
+    alignItems: 'flex-start',
+    overflow: 'hidden',
+    position: 'relative',
+    marginTop: 20,
+    transform: [{rotate: '180deg'}],
+  },
+  tankLevel: {
+    position: 'relative',
+    bottom: 0,
+    width: '100%',
+    backgroundColor: '#3994f8',
+  },
   buttonContainer: {
     display: 'flex',
     flexDirection: 'column',
