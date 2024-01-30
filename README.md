@@ -92,7 +92,7 @@ To learn more about React Native, take a look at the following resources:
 
 
 ### APK 
-coming soon
+[Water Tank Simulator App](https://drive.google.com/file/d/1cVCSFIdo82bQiJENGTtIOMpwFtFUGkLA/view?usp=sharing)
 
 ### Test
 In Progress
