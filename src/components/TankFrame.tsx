@@ -92,7 +92,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderBottomWidth: 2,
     borderRadius: 8,
-    // borderTopRightRadius: 8,
     borderColor: 'grey',
     display: 'flex',
     alignItems: 'flex-start',
