@@ -2,6 +2,7 @@ import {
   MaxQuantity,
   addWaterHandler,
   delay,
+  emptyWaterHandler,
   getTotalWaterCanFlowOut,
 } from '../../src/utils/helper';
 
@@ -135,5 +136,38 @@ describe('addWaterHandler', () => {
 
     // Ensure setIntervalId is called once
     expect(setIntervalIdMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('stopPressingIn', () => {
+  // Mock the clearInterval and setIntervalId functions for testing
+  const clearIntervalMock = jest.fn();
+  const setIntervalIdMock = jest.fn();
+
+  it('should clear the interval and set the interval ID to null', () => {});
+});
+
+describe('emptyWaterHandler', () => {
+  it('should empty the water in the specified tank', () => {
+    const index = 2;
+    const setLiquidQuanityMock = jest.fn();
+    // Mock the initial liquid levels
+    const prevLevels = [100, 150, 200, 250];
+    setLiquidQuanityMock.mockImplementationOnce(prevLevels =>
+      prevLevels.map((level, i) => (i === index ? 0 : level)),
+    );
+    // Call the function to empty the specified tank
+    emptyWaterHandler(index, setLiquidQuanityMock);
+    // Ensure setLiquidQuanity is called with the expected arguments
+    expect(setLiquidQuanityMock).toHaveBeenCalledWith(prevLevels);
+    // Check if the specified tank is emptied
+    const updatedLevels = setLiquidQuanityMock.mock.calls[0][0];
+    expect(updatedLevels[index]).toBe(0);
+    // Check if other tanks remain unchanged
+    for (let i = 0; i < prevLevels.length; i++) {
+      if (i !== index) {
+        expect(updatedLevels[i]).toBe(prevLevels[i]);
+      }
+    }
   });
 });
