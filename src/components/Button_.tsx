@@ -1,17 +1,43 @@
-import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
+import {colors} from '../constants/Colors';
 
 type ButtonType = {
   title: string;
-  handler: () => void;
+  handler?: () => void;
   buttonColor: string;
+  outLine: boolean;
+  onPressIn?: () => void;
+  onPressOut?: () => void;
 };
-const Button_ = ({title, handler, buttonColor}: ButtonType) => {
+const Button_ = ({
+  title,
+  handler,
+  buttonColor,
+  outLine,
+  onPressIn,
+  onPressOut,
+}: ButtonType) => {
   return (
     <TouchableOpacity
-      style={[styles.button, {backgroundColor: buttonColor}]}
+      style={[
+        styles.button,
+        outLine
+          ? {borderColor: buttonColor, borderWidth: 2}
+          : {backgroundColor: buttonColor},
+      ]}
+      onPressIn={onPressIn}
+      onPressOut={onPressOut}
       onPress={handler}>
-      <Text style={styles.buttonText}>{title}</Text>
+      <Text
+        style={[
+          styles.buttonText,
+          outLine
+            ? {color: colors.color_secondary}
+            : {color: colors.color_background},
+        ]}>
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -20,9 +46,8 @@ export default Button_;
 
 const styles = StyleSheet.create({
   button: {
-    // backgroundColor: '#4CAF50', // Green color
     paddingVertical: 12,
-    paddingHorizontal: 24,
+    paddingHorizontal: 12,
     borderRadius: 8,
     shadowColor: '#000',
     shadowOffset: {
@@ -31,12 +56,11 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5,
     marginTop: 20,
   },
   buttonText: {
-    color: '#fff', // White text color
-    fontSize: 16,
+    color: '#000',
+    fontSize: 12,
     textAlign: 'center',
     fontWeight: 'bold',
   },
