@@ -44,3 +44,12 @@ describe('getTotalWaterCanFlowOut', () => {
     ]);
   });
 });
+
+describe('delay', () => {
+  it('should delay the specified time', async () => {
+    const start = Date.now();
+    await delay(1000);
+    const end = Date.now();
+    expect(end - start).toBeGreaterThanOrEqual(1000);
+  });
+});
