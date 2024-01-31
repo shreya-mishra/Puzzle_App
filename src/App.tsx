@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, TextInput, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import TankFrame from './components/TankFrame';
 import {
   MaxQuantity,
@@ -10,7 +10,7 @@ import {
 import {colors} from './constants/Colors';
 
 const App = () => {
-  const [numTanks, setNumTanks] = useState<number>(NUMBER_OF_TANKS); // Default number of tanks
+  const [numTanks] = useState<number>(NUMBER_OF_TANKS); // Default number of tanks
 
   const [liquidQuantity, setLiquidQuanity] = useState<number[]>(
     Array(numTanks).fill(0),
@@ -53,17 +53,24 @@ const App = () => {
     };
     //get total water that can flow out and distribute into small tank
   }, [liquidQuantity]);
-
+  const [intervalId, setIntervalId] = useState(null);
   const addWaterHandler = (index: number) => {
-    setLiquidQuanity(prevLevels =>
-      prevLevels.map((level, i) =>
-        i === index && level < MaxQuantity
-          ? Math.min(level + 200, MaxQuantity)
-          : i === index - 1 && level > 0
-          ? Math.max(level - 200, 0)
-          : level,
-      ),
-    );
+    const id = setInterval(() => {
+      setLiquidQuanity(prevLevels =>
+        prevLevels.map((level, i) =>
+          i === index && level < MaxQuantity
+            ? Math.min(level + 200, MaxQuantity)
+            : i === index - 1 && level > 0
+            ? Math.max(level, 0)
+            : level,
+        ),
+      );
+    }, 1000);
+    setIntervalId(id);
+  };
+  const stopPressingIn = () => {
+    clearInterval(intervalId);
+    setIntervalId(null);
   };
 
   const emptyWaterHandler = (index: number) => {
@@ -73,13 +80,7 @@ const App = () => {
   };
   return (
     <ScrollView style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter number of tanks"
-        placeholderTextColor={colors.color_100}
-        keyboardType="numeric"
-        onChangeText={text => setNumTanks(parseInt(text) || 0)}
-      />
+      <Text style={styles.title}>Water Tank Simulation</Text>
       <View style={styles.tankRow}>
         {liquidQuantity.map((level, index) => (
           <TankFrame
@@ -87,6 +88,7 @@ const App = () => {
             key={index}
             index={index}
             addWaterHandler={() => addWaterHandler(index)}
+            clearInterval={stopPressingIn}
             emptyWaterHandler={() => emptyWaterHandler(index)}
             quantity={level}
           />
@@ -103,6 +105,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.color_background,
   },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: colors.color_water,
+    textAlign: 'center',
+    marginTop: 10,
+    marginBottom: 20,
+  },
   input: {
     height: 40,
     borderWidth: 1,
@@ -113,7 +123,8 @@ const styles = StyleSheet.create({
   },
   tankRow: {
     flexDirection: 'row',
+    gap: 10,
+    padding: 20,
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
   },
 });

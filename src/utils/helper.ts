@@ -1,4 +1,4 @@
-export const NUMBER_OF_TANKS = 2;
+export const NUMBER_OF_TANKS = 4;
 export const MaxQuantity = 1000;
 export const flowRate = 25;
 export const getTotalWaterCanFlowOut = (
