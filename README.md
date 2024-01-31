@@ -94,7 +94,8 @@ To learn more about React Native, take a look at the following resources:
 [Water Tank Simulator App](https://drive.google.com/file/d/1cVCSFIdo82bQiJENGTtIOMpwFtFUGkLA/view?usp=sharing)
 
 ### Test
-In Progress
+![image](https://github.com/shreya-mishra/Puzzle_App/assets/61110378/de6b6326-e4cc-4605-ab14-d16581764d35)
+
 
 
 
