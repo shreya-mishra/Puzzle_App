@@ -38,3 +38,38 @@ export const getTotalWaterCanFlowOut = (
 export const delay = ms => {
   return new Promise(resolve => setTimeout(resolve, ms));
 };
+
+export const addWaterHandler = (
+  index: number,
+  setLiquidQuanity: (prev: any) => void,
+  setIntervalId: (prev: any) => void,
+) => {
+  const id = setInterval(() => {
+    setLiquidQuanity((prevLevels: any) =>
+      prevLevels.map((level: any, i: any) =>
+        i === index && level < MaxQuantity
+          ? Math.min(level + 200, MaxQuantity)
+          : i === index - 1 && level > 0
+          ? Math.max(level, 0)
+          : level,
+      ),
+    );
+  }, 1000);
+  setIntervalId(id);
+};
+export const stopPressingIn = (
+  intervalId: any,
+  setIntervalId: (prev: any) => void,
+) => {
+  clearInterval(intervalId);
+  setIntervalId(null);
+};
+
+export const emptyWaterHandler = (
+  index: number,
+  setLiquidQuanity: (prev: any) => void,
+) => {
+  setLiquidQuanity((prevLevels: any) =>
+    prevLevels.map((level: any, i: any) => (i === index ? 0 : level)),
+  );
+};

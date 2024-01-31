@@ -4,8 +4,11 @@ import TankFrame from './components/TankFrame';
 import {
   MaxQuantity,
   NUMBER_OF_TANKS,
+  addWaterHandler,
   delay,
+  emptyWaterHandler,
   getTotalWaterCanFlowOut,
+  stopPressingIn,
 } from './utils/helper';
 import {colors} from './constants/Colors';
 
@@ -15,6 +18,8 @@ const App = () => {
   const [liquidQuantity, setLiquidQuanity] = useState<number[]>(
     Array(numTanks).fill(0),
   );
+  const [intervalId, setIntervalId] = useState(null);
+
   useEffect(() => {
     const newTanks = Array(numTanks).fill(0);
     setLiquidQuanity(newTanks);
@@ -53,31 +58,7 @@ const App = () => {
     };
     //get total water that can flow out and distribute into small tank
   }, [liquidQuantity]);
-  const [intervalId, setIntervalId] = useState(null);
-  const addWaterHandler = (index: number) => {
-    const id = setInterval(() => {
-      setLiquidQuanity(prevLevels =>
-        prevLevels.map((level, i) =>
-          i === index && level < MaxQuantity
-            ? Math.min(level + 200, MaxQuantity)
-            : i === index - 1 && level > 0
-            ? Math.max(level, 0)
-            : level,
-        ),
-      );
-    }, 1000);
-    setIntervalId(id);
-  };
-  const stopPressingIn = () => {
-    clearInterval(intervalId);
-    setIntervalId(null);
-  };
 
-  const emptyWaterHandler = (index: number) => {
-    setLiquidQuanity(prevLevels =>
-      prevLevels.map((level, i) => (i === index ? 0 : level)),
-    );
-  };
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Water Tank Simulation</Text>
@@ -87,9 +68,11 @@ const App = () => {
             testID="tank0"
             key={index}
             index={index}
-            addWaterHandler={() => addWaterHandler(index)}
-            clearInterval={stopPressingIn}
-            emptyWaterHandler={() => emptyWaterHandler(index)}
+            addWaterHandler={() =>
+              addWaterHandler(index, setLiquidQuanity, setIntervalId)
+            }
+            clearInterval={() => stopPressingIn(intervalId, setIntervalId)}
+            emptyWaterHandler={() => emptyWaterHandler(index, setLiquidQuanity)}
             quantity={level}
           />
         ))}
