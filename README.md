@@ -88,9 +88,7 @@ To learn more about React Native, take a look at the following resources:
 - on Empty tank button clicked it will remove all water from tank in instant
 
 ### Video 
-[Screencast from 01-31-2024 12:00:17 AM.webm](https://github.com/shreya-mishra/Puzzle_App/assets/61110378/f99f55d0-cb2e-4282-8d7d-352f1fc9423a)
-
-
+[Screencast from 01-31-2024 11:24:44 PM.webm](https://github.com/shreya-mishra/Puzzle_App/assets/61110378/4933ccac-4aea-4f7f-ac49-69bd251ddfdd)
 
 ### APK 
 [Water Tank Simulator App](https://drive.google.com/file/d/1cVCSFIdo82bQiJENGTtIOMpwFtFUGkLA/view?usp=sharing)
