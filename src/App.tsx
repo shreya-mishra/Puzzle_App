@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import TankFrame from './components/TankFrame';
 import {
@@ -9,13 +9,39 @@ import {
   emptyWaterHandler,
   getTotalWaterCanFlowOut,
   stopPressingIn,
+  emptyWaterHandlerNew,
+  addWaterHandlerNew,
+  balanceAllWaterTanks,
 } from './utils/helper';
 import {colors} from './constants/Colors';
+import TankFrameNew from './components/TankFrameNew';
 
+export type TanksType = {
+  bufferWaterTankQuantity: number;
+  waterTankQuantity: number;
+  id: number;
+};
 const App = () => {
+  const [waterTanks, setWaterTanks] = useState<TanksType[]>(
+    Array(NUMBER_OF_TANKS)
+      .fill(1)
+      .map((tank, index) => ({
+        bufferWaterTankQuantity: 0,
+        waterTankQuantity: 0,
+        id: index + 1,
+      })),
+  );
+  
+  let addWaterInterval = useRef<any>(null);
+  let emptyWaterFromBufferToWaterTankInterval = useRef<any>(null);
+
   const [numTanks] = useState<number>(NUMBER_OF_TANKS); // Default number of tanks
 
   const [liquidQuantity, setLiquidQuanity] = useState<number[]>(
+    Array(numTanks).fill(0),
+  );
+
+  const [magicalBuffer, setMagicalBuffer] = useState<number[]>(
     Array(numTanks).fill(0),
   );
   const [intervalId, setIntervalId] = useState(null);
@@ -24,6 +50,16 @@ const App = () => {
     const newTanks = Array(numTanks).fill(0);
     setLiquidQuanity(newTanks);
   }, [numTanks]);
+
+  useEffect(() => {
+    console.log(
+      'balanceAllWaterTanks(waterTanks)',
+      balanceAllWaterTanks(waterTanks),
+    );
+
+    setWaterTanks(prev => balanceAllWaterTanks(prev));
+  }, [waterTanks]);
+
   useEffect(() => {
     // get total level
     const totalQty = liquidQuantity.reduce((acc, level) => acc + level, 0);
@@ -63,20 +99,44 @@ const App = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Water Tank Simulation</Text>
       <View style={styles.tankRow}>
+        {waterTanks.map(tank => (
+          <TankFrameNew
+            testID={`tank${tank.id - 1}`}
+            key={tank.id}
+            addWaterHandler={() => {
+              addWaterHandlerNew(tank.id, addWaterInterval, setWaterTanks);
+            }}
+            waterTank={tank}
+            clearInterval={() =>
+              addWaterInterval && clearInterval(addWaterInterval.current)
+            }
+            emptyWaterHandler={() =>
+              emptyWaterHandlerNew(tank.id, setWaterTanks)
+            }
+          />
+        ))}
+      </View>
+      {/* <View style={styles.tankRow}>
         {liquidQuantity.map((level, index) => (
           <TankFrame
-            testID="tank0"
+            testID={`tank${index}`}
             key={index}
             index={index}
             addWaterHandler={() =>
-              addWaterHandler(index, setLiquidQuanity, setIntervalId)
+              addWaterHandler(
+                index,
+                setLiquidQuanity,
+                setIntervalId,
+                setMagicalBuffer,
+              )
             }
+            magicalBuffer={magicalBuffer[index]}
             clearInterval={() => stopPressingIn(intervalId, setIntervalId)}
             emptyWaterHandler={() => emptyWaterHandler(index, setLiquidQuanity)}
             quantity={level}
           />
         ))}
-      </View>
+      </View> */}
     </ScrollView>
   );
 };
@@ -105,9 +165,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   tankRow: {
+    display: 'flex',
     flexDirection: 'row',
-    gap: 10,
-    padding: 20,
+    justifyContent: 'space-around',
     flexWrap: 'wrap',
   },
 });

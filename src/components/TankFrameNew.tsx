@@ -6,40 +6,37 @@ import {
   Text,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
+import {TanksType} from '../App';
 import Button_ from './Button_';
 import {colors} from '../constants/Colors';
+import {useEffect, useState} from 'react';
 
-const {width} = Dimensions.get('screen');
-type tankFrameType = {
-  index: number;
-  quantity: number;
+type TankFrameNewProps = {
+  waterTank: TanksType;
   testID: string;
   addWaterHandler: () => void;
   emptyWaterHandler: () => void;
   clearInterval: () => void;
-  magicalBuffer: number;
 };
-const TankFrame = ({
-  index,
-  quantity,
-  testID,
+const {width} = Dimensions.get('screen');
+const TankFrameNew = ({
+  waterTank,
+  clearInterval,
   addWaterHandler,
   emptyWaterHandler,
-  clearInterval,
-  magicalBuffer,
-}: tankFrameType) => {
-  console.log('🚀 ~ magicalBuffer:', magicalBuffer);
+  testID,
+}: TankFrameNewProps) => {
   const [tankLevelHeight] = useState(new Animated.Value(0));
 
   useEffect(() => {
     Animated.timing(tankLevelHeight, {
-      toValue: quantity * 0.09,
+      toValue: waterTank.waterTankQuantity * 0.09,
       duration: 500, // Adjust the duration as needed
       easing: Easing.linear,
       useNativeDriver: false,
     }).start();
-  }, [quantity]);
+  }, [waterTank, tankLevelHeight]);
 
   return (
     <View style={styles.container} testID={testID}>
@@ -58,21 +55,27 @@ const TankFrame = ({
           buttonColor={colors.color_secondary}
         />
       </View>
-      <Text>BUFFER:{magicalBuffer}</Text>
+      <Text style={{color: 'black'}}>
+        BUFFER:{waterTank.bufferWaterTankQuantity}
+      </Text>
       <View style={styles.tank}>
         <Animated.View style={[styles.tankLevel, {height: tankLevelHeight}]} />
         <View style={styles.text}>
-          <Text style={{color: quantity > 700 ? 'white' : colors.color_100}}>
-            {quantity.toFixed(1)}Ltr
+          <Text
+            style={{
+              color:
+                waterTank.waterTankQuantity > 700 ? 'white' : colors.color_100,
+            }}>
+            {waterTank.waterTankQuantity.toFixed(1)}Ltr
           </Text>
         </View>
       </View>
-      <Text style={styles.basket}>Tank {index + 1}</Text>
+      <Text style={styles.basket}>Tank {waterTank.id}</Text>
     </View>
   );
 };
 
-export default TankFrame;
+export default TankFrameNew;
 
 const styles = StyleSheet.create({
   container: {
