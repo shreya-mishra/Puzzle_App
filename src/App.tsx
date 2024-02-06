@@ -1,81 +1,108 @@
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
-import TankFrame from './components/TankFrame';
+
 import {
-  MaxQuantity,
   NUMBER_OF_TANKS,
   addWaterHandler,
-  delay,
   emptyWaterHandler,
-  getTotalWaterCanFlowOut,
-  stopPressingIn,
+  ifArrayIsWithEqualValues,
 } from './utils/helper';
+import TankFrame from './components/TankFrame';
 import {colors} from './constants/Colors';
 
 const App = () => {
-  const [numTanks] = useState<number>(NUMBER_OF_TANKS); // Default number of tanks
-
-  const [liquidQuantity, setLiquidQuanity] = useState<number[]>(
-    Array(numTanks).fill(0),
+  const [quantityInTanks, setQuantityInTanks] = useState(
+    Array(NUMBER_OF_TANKS).fill(0),
   );
-  const [intervalId, setIntervalId] = useState(null);
+  const [quantityInMagicTanks, setQuantityInMagicTanks] = useState(
+    Array(NUMBER_OF_TANKS).fill(0),
+  );
 
   useEffect(() => {
-    const newTanks = Array(numTanks).fill(0);
-    setLiquidQuanity(newTanks);
-  }, [numTanks]);
-  useEffect(() => {
-    // get total level
-    const totalQty = liquidQuantity.reduce((acc, level) => acc + level, 0);
-
-    // get average level
-    const averageQty = totalQty / numTanks;
-    // get smaller tank quantity
-    const smallerQtyTanks = liquidQuantity.filter(level => level < averageQty);
-    //get total water that can flow out
-    let cleanup = false;
-
-    async function balanceLevels() {
-      await delay(1000);
-
-      if (cleanup) {
-        return;
-      }
-
-      const newTanks = getTotalWaterCanFlowOut(
-        liquidQuantity,
-        averageQty,
-        smallerQtyTanks,
-      );
-      if (newTanks) {
-        setLiquidQuanity(newTanks);
-      }
-    }
-
-    balanceLevels();
+    let timer1 = setInterval(() => {
+      console.log('Running');
+      setQuantityInMagicTanks(prev1 => {
+        if (!ifArrayIsWithEqualValues(prev1, 0)) {
+          const totalInMagicTank = prev1.reduce(
+            (accumulator, currentValue) => accumulator + currentValue,
+            0,
+          );
+          const flow = Math.min(25, totalInMagicTank);
+          const avgQty = flow / prev1.length;
+          setQuantityInTanks(prev => {
+            const waterInTanks = prev.map(
+              val => val + Math.min(avgQty, 1000 - val),
+            );
+            return waterInTanks;
+          });
+          return prev1.map(val => {
+            return val - (val / totalInMagicTank) * flow;
+          });
+        }
+        return prev1;
+      });
+      setQuantityInTanks(prev => {
+        const waterInTanks = [...prev];
+        if (!ifArrayIsWithEqualValues(waterInTanks, waterInTanks[0])) {
+          const totalWaterInTanks = waterInTanks.reduce(
+            (accumulator, currentValue) => accumulator + currentValue,
+            0,
+          );
+          const avgQtyInTank = totalWaterInTanks / waterInTanks.length;
+          let tanksWithMoreWater = 0,
+            tanksWitLessWater = 0;
+          for (let i = 0; i < waterInTanks.length; i++) {
+            if (waterInTanks[i] > avgQtyInTank) {
+              tanksWithMoreWater++;
+            } else if (waterInTanks[i] < avgQtyInTank) {
+              tanksWitLessWater++;
+            }
+          }
+          return waterInTanks.map(water => {
+            if (water > avgQtyInTank) {
+              return Math.max(avgQtyInTank, water - 25 / tanksWithMoreWater);
+            } else if (water < avgQtyInTank) {
+              return Math.min(avgQtyInTank, water + 25 / tanksWitLessWater);
+            } else {
+              return water;
+            }
+          });
+        }
+        return waterInTanks;
+      });
+    }, 1000);
     return () => {
-      cleanup = true;
+      clearInterval(timer1);
     };
-    //get total water that can flow out and distribute into small tank
-  }, [liquidQuantity]);
+  }, []);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={{...styles.container, padding: 16}}>
       <Text style={styles.title}>Water Tank Simulation</Text>
       <View style={styles.tankRow}>
-        {liquidQuantity.map((level, index) => (
-          <TankFrame
-            testID="tank0"
-            key={index}
-            index={index}
-            addWaterHandler={() =>
-              addWaterHandler(index, setLiquidQuanity, setIntervalId)
-            }
-            clearInterval={() => stopPressingIn(intervalId, setIntervalId)}
-            emptyWaterHandler={() => emptyWaterHandler(index, setLiquidQuanity)}
-            quantity={level}
-          />
-        ))}
+        {quantityInTanks.map((quantity, index) => {
+          return (
+            <TankFrame
+              key={index}
+              addWaterHandler={() =>
+                addWaterHandler(index, quantity, setQuantityInMagicTanks)
+              }
+              emptyWaterHandler={() => {
+                emptyWaterHandler(
+                  index,
+                  setQuantityInTanks,
+                  setQuantityInMagicTanks,
+                );
+              }}
+              testID={`tank-${index}`}
+              quantity={quantity}
+              quantityInMagicTank={quantityInMagicTanks[index]}
+              index={index}
+              setQuantityInTanks={setQuantityInTanks}
+              setQuantityInMagicTanks={setQuantityInMagicTanks}
+            />
+          );
+        })}
       </View>
     </ScrollView>
   );
@@ -96,18 +123,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 20,
   },
-  input: {
-    height: 40,
-    borderWidth: 1,
-    marginBottom: 10,
-    textAlign: 'center',
-    margin: 10,
-    borderRadius: 4,
-  },
   tankRow: {
+    display: 'flex',
     flexDirection: 'row',
-    gap: 10,
-    padding: 20,
+    justifyContent: 'space-around',
     flexWrap: 'wrap',
   },
 });

@@ -6,33 +6,41 @@ import {
   Text,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import Button_ from './Button_';
 import {colors} from '../constants/Colors';
+import Lottie from 'lottie-react-native';
+import SoundView from './SoundView';
 
 const {width} = Dimensions.get('screen');
 type tankFrameType = {
   index: number;
   quantity: number;
   testID: string;
-  addWaterHandler: () => void;
+  quantityInMagicTank: number;
   emptyWaterHandler: () => void;
-  clearInterval: () => void;
+  addWaterHandler: () => NodeJS.Timer;
+  setQuantityInTanks: React.Dispatch<React.SetStateAction<any[]>>;
+  setQuantityInMagicTanks: React.Dispatch<React.SetStateAction<any[]>>;
 };
 const TankFrame = ({
   index,
   quantity,
   testID,
-  addWaterHandler,
   emptyWaterHandler,
-  clearInterval,
+  quantityInMagicTank,
+  addWaterHandler,
 }: tankFrameType) => {
   const [tankLevelHeight] = useState(new Animated.Value(0));
-
+  const [timer, setTimer] = useState<any>(null);
+  const bufferText = useMemo(
+    () => `Buffer: ${quantityInMagicTank.toFixed(0)}`,
+    [quantityInMagicTank],
+  );
   useEffect(() => {
     Animated.timing(tankLevelHeight, {
-      toValue: quantity * 0.08,
-      duration: 500, // Adjust the duration as needed
+      toValue: quantity * 0.09,
+      duration: 500,
       easing: Easing.linear,
       useNativeDriver: false,
     }).start();
@@ -45,8 +53,12 @@ const TankFrame = ({
           title={'ADD '}
           buttonColor={'green'}
           outLine={false}
-          onPressIn={addWaterHandler}
-          onPressOut={clearInterval}
+          onPressIn={() => {
+            setTimer(addWaterHandler);
+          }}
+          onPressOut={() => {
+            clearInterval(timer);
+          }}
         />
         <Button_
           title={'EMPTY '}
@@ -55,6 +67,32 @@ const TankFrame = ({
           buttonColor={colors.color_secondary}
         />
       </View>
+      <View style={styles.animationContainer}>
+        <Text
+          // numberOfLines={2}
+          style={{
+            color: 'black',
+            textAlign: 'center',
+            marginTop: 10,
+            maxWidth: width,
+          }}>
+          {bufferText}
+        </Text>
+      </View>
+      <View style={styles.animationContainer}>
+        <Lottie
+          loop={true}
+          key={quantityInMagicTank.toString()}
+          autoPlay={quantityInMagicTank ? true : false}
+          source={require('../asset/raining_cloud.json')}
+          style={{
+            width: width / 5,
+            height: 100,
+          }}
+        />
+        <SoundView isPlaySound={quantityInMagicTank ? true : false} />
+      </View>
+
       <View style={styles.tank}>
         <Animated.View style={[styles.tankLevel, {height: tankLevelHeight}]} />
         <View style={styles.text}>
@@ -74,8 +112,8 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     justifyContent: 'space-between',
-    width: width / 5,
     alignItems: 'center',
+    marginTop: 16,
   },
   text: {
     position: 'absolute',
@@ -84,7 +122,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     display: 'flex',
     width: width / 5,
-    transform: [{rotate: '180deg'}],
+    bottom: 0,
   },
   tank: {
     height: 100,
@@ -95,10 +133,10 @@ const styles = StyleSheet.create({
     borderColor: 'grey',
     display: 'flex',
     alignItems: 'flex-start',
-    overflow: 'hidden',
+    // overflow: 'hidden',
     position: 'relative',
     marginTop: 20,
-    transform: [{rotate: '180deg'}],
+    flexDirection: 'column-reverse',
   },
   tankLevel: {
     position: 'relative',
@@ -119,5 +157,11 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontWeight: 'bold',
     color: 'orange',
+  },
+  animationContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
   },
 });

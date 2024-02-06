@@ -1,61 +1,24 @@
 export const NUMBER_OF_TANKS = 4;
 export const MaxQuantity = 1000;
 export const flowRate = 25;
-export const getTotalWaterCanFlowOut = (
-  liquidQuantity: number[],
-  averageQty: number,
-  smallerQtyTanks: [],
-) => {
-  if (liquidQuantity.every(qty => qty - averageQty < 0.0001)) {
-    return null;
-  }
-
-  if (liquidQuantity.length === 0) {
-    return null;
-  }
-
-  let totalFlowRate = 0;
-  const newQtyInTanks = liquidQuantity.map(qty => {
-    if (qty > averageQty) {
-      const outFlowRate = Math.min(qty - averageQty, flowRate);
-      totalFlowRate = totalFlowRate + outFlowRate;
-      return qty - outFlowRate;
-    }
-    return qty;
-  });
-
-  const waterDistribution = totalFlowRate / smallerQtyTanks.length;
-
-  newQtyInTanks.forEach((qty, index) => {
-    if (qty < averageQty) {
-      newQtyInTanks[index] = qty + waterDistribution;
-    }
-  });
-
-  return newQtyInTanks;
-};
-
-export const delay = ms => {
-  return new Promise(resolve => setTimeout(resolve, ms));
-};
 
 export const addWaterHandler = (
   index: number,
-  setLiquidQuanity: (prev: any) => void,
-  setIntervalId: (prev: any) => void,
+  quantity: number,
+  setQuantityInMagicTanks: React.Dispatch<React.SetStateAction<any[]>>,
 ) => {
-  const id = setInterval(() => {
-    setLiquidQuanity((prevLevels: any) =>
-      prevLevels.map((level: any, i: any) =>
-        i === index && level < MaxQuantity
-          ? Math.min(level + 200, MaxQuantity)
-          : i === index - 1 && level > 0
-          ? Math.max(level, 0)
-          : level,
-      ),
-    );
+  const timer_ = setInterval(() => {
+    setQuantityInMagicTanks(prev => {
+      const newQuantityInMagicTanks = [...prev];
+      newQuantityInMagicTanks[index] =
+        1000 - (newQuantityInMagicTanks[index] + quantity) > 200
+          ? newQuantityInMagicTanks[index] + 200
+          : newQuantityInMagicTanks[index] +
+            (1000 - (newQuantityInMagicTanks[index] + quantity));
+      return newQuantityInMagicTanks;
+    });
   }, 1000);
-  setIntervalId(id);
+  return timer_;
 };
 export const stopPressingIn = (
   intervalId: any,
@@ -67,9 +30,26 @@ export const stopPressingIn = (
 
 export const emptyWaterHandler = (
   index: number,
-  setLiquidQuanity: (prev: any) => void,
+  setLiquidQuanity: React.Dispatch<React.SetStateAction<any[]>>,
+  setQuantityInMagicTanks: React.Dispatch<React.SetStateAction<any[]>>,
 ) => {
-  setLiquidQuanity((prevLevels: any) =>
-    prevLevels.map((level: any, i: any) => (i === index ? 0 : level)),
-  );
+  setQuantityInMagicTanks((prevLevels: any) => {
+    const newQuantityInTanks = [...prevLevels];
+    newQuantityInTanks[index] = 0;
+    return newQuantityInTanks;
+  });
+  setLiquidQuanity((prevLevels: any) => {
+    const newQuantityInTanks = [...prevLevels];
+    newQuantityInTanks[index] = 0;
+    return newQuantityInTanks;
+  });
+};
+
+export const ifArrayIsWithEqualValues = (arr, value) => {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] !== value) {
+      return false;
+    }
+  }
+  return true;
 };
